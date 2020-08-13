@@ -6,22 +6,26 @@ using System.Text;
 
 namespace SalesTaxes.BusinessLayer
 {
-    public class Cart
+    public class Cart : ICart
     {
         public int CartNo { get; set; }
 
-        public List<CartItem> ListCartItem = new List<CartItem>();
+        public List<ICartItem> ListCartItem = new List<ICartItem>();
 
-        private readonly ILogger _logger; 
+        private readonly ILogger _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public Cart(ILogger logger)
+        public Cart(ILogger logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
-        public CartItem AddCartItem (int quantity, string productName, decimal shelfPrice)
+        public ICartItem AddCartItem(int quantity, string productName, decimal shelfPrice)
         {
-            var cartItem = new CartItem() { Quantity = quantity, ShelfPrice = shelfPrice };
+            var cartItem = (ICartItem)_serviceProvider.GetService(typeof(ICartItem));
+            cartItem.Quantity = quantity;
+            cartItem.ShelfPrice = shelfPrice;
             cartItem.Product.ProductName = productName;
 
             ListCartItem.Add(cartItem);
@@ -37,7 +41,7 @@ namespace SalesTaxes.BusinessLayer
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Output {CartNo}:");
-            
+
             foreach (var cartItem in ListCartItem)
             {
                 sb.AppendLine("	" + cartItem.GenerateReceiptLine());

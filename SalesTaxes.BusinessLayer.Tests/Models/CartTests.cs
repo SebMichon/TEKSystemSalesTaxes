@@ -4,18 +4,23 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Moq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SalesTaxes.BusinessLayer.Tests
 {
     public class CartTests
     {
+        
         [Theory]
         [InlineData(1, "book", 12.49)]
         public void AddCartItem_ShouldSetPropertiesCorrectly(int quantity, string productName, decimal shelfPrice)
         {
             // Arrange
             var mockLogger = new Mock<ILogger>();
-            var cart = new Cart(mockLogger.Object);
+
+            var serviceProvider=RegisterServices();
+
+            var cart = new Cart(mockLogger.Object, serviceProvider);
 
             // Act
             var cartItem = cart.AddCartItem(quantity, productName, shelfPrice);
@@ -24,6 +29,8 @@ namespace SalesTaxes.BusinessLayer.Tests
             Assert.Equal(quantity, cartItem.Quantity);
             Assert.Equal(productName, cartItem.Product.ProductName);
             Assert.Equal(shelfPrice, cartItem.ShelfPrice);
+
+            DisposeServices(serviceProvider);
         }
 
 
@@ -34,7 +41,8 @@ namespace SalesTaxes.BusinessLayer.Tests
         {
             // Arrange
             var mockLogger = new Mock<ILogger>();
-            var cart = new Cart(mockLogger.Object);
+            var serviceProvider = RegisterServices();
+            var cart = new Cart(mockLogger.Object, serviceProvider);
 
             // Act
             for (int i = 1; i <= nbCartItemToAdd; i++)
@@ -44,6 +52,8 @@ namespace SalesTaxes.BusinessLayer.Tests
 
             // Assert
             Assert.Equal(nbCartItemToAdd, cart.ListCartItem.Count);
+
+            DisposeServices(serviceProvider);
 
         }
 
@@ -57,7 +67,10 @@ namespace SalesTaxes.BusinessLayer.Tests
         {
             // Arrange
             var mockLogger = new Mock<ILogger>();
-            var cart = new Cart(mockLogger.Object) { CartNo = 1 };
+
+            var serviceProvider = RegisterServices();
+
+            var cart = new Cart(mockLogger.Object, serviceProvider) { CartNo = 1 };
             cart.AddCartItem(item1Quantity, item1ProductName, item1ShelfPrice);
             cart.AddCartItem(item2Quantity, item2ProductName, item2ShelfPrice);
 
@@ -75,7 +88,10 @@ namespace SalesTaxes.BusinessLayer.Tests
             // Arrange
             var mockLogger = new Mock<ILogger>();
             mockLogger.Setup(mock => mock.Log(It.IsAny<String>()));
-            var cart = new Cart(mockLogger.Object) ;
+
+            var serviceProvider = RegisterServices();
+
+            var cart = new Cart(mockLogger.Object, serviceProvider) ;
             var productName = "book";
             cart.AddCartItem(1, productName, 20);
             
@@ -85,6 +101,31 @@ namespace SalesTaxes.BusinessLayer.Tests
 
             // Assert
             mockLogger.Verify(mock => mock.Log(It.Is<string>(s => s.Contains(productName))), Times.Once);
+        }
+
+
+        private static IServiceProvider RegisterServices()
+        {
+            var services = new ServiceCollection();
+            services.AddTransient<IProduct, Product>();
+            services.AddTransient<ICartItem, CartItem>();
+
+            return services.BuildServiceProvider(true);
+        }
+
+
+
+
+        private static void DisposeServices(IServiceProvider serviceProvider)
+        {
+            if (serviceProvider == null)
+            {
+                return;
+            }
+            if (serviceProvider is IDisposable)
+            {
+                ((IDisposable)serviceProvider).Dispose();
+            }
         }
     }
 }

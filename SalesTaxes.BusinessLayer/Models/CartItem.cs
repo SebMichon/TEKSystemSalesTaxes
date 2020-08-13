@@ -5,10 +5,15 @@ using System.Text;
 
 namespace SalesTaxes.BusinessLayer
 {
-    public class CartItem
+    public class CartItem : ICartItem
     {
 
-        public IProduct Product { get; set; } = new Product();
+        public CartItem(IProduct product)
+        {
+            Product = product;
+        }
+
+        public IProduct Product { get; }
 
         public int Quantity { get; set; }
 
