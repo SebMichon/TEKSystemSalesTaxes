@@ -7,7 +7,19 @@ namespace SalesTaxes.BusinessLayer
 {
     public class Product : IProduct
     {
-        public string ProductName { get; set; }
+           private string _productName = "";
+
+        public string ProductName
+        {
+            get { return _productName; }
+            set 
+            {
+                // we dont allow for Null for Product name
+                if (value == null) value = "";
+                _productName = value; 
+            }
+        }
+
 
         public bool IsImported => ProductName.Contains("imported");
 
@@ -37,16 +49,13 @@ namespace SalesTaxes.BusinessLayer
         /// <summary>
         /// Indicates if the product is Sales Taxes exempt
         /// Basic sales tax is applicable at a rate of 10% on all goods, except books, food, and medical products that are exempt. 
-        /// 
-        /// Note: If the number of products increase, we should consider placing Product and their categories in the database 
-        /// so we dont need to modify the code when we add new products (or modify products name)
         /// </summary>
         /// <returns></returns>
         public bool IsTaxExempt()
         {
             var TaxExemptProduct = new[] { "chocolate", "book", "headache pills" };
             bool isTaxExempt = TaxExemptProduct.Any(c => ProductName.Contains(c));
-
+                        
             return isTaxExempt;
         }
     }

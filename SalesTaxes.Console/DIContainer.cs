@@ -12,7 +12,7 @@ namespace SalesTaxes.AppConsole
     public class DIContainer
     {
 
-        public static IServiceProvider ServiceProvider;
+        public static IServiceProvider? ServiceProvider;
 
         public static void RunConsoleApplication()
         {

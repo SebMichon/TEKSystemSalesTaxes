@@ -15,16 +15,18 @@ namespace SalesTaxes.BusinessLayer.Tests
         [InlineData("book", true)]
         [InlineData("imported bottle of perfume", false)]
         [InlineData("music CD", false)]
-        public void IsTaxExempt_ShouldDetermneIfProductCategoryIsTaxExempt(string productName, bool expectedResult)
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        public void IsTaxExempt_ShouldDetermneIfProductCategoryIsTaxExempt(string productName, bool expectedIsTaxExempt)
         {
             // Arrange
             var product = new Product() { ProductName = productName };
 
             // Act
-            bool actualResult = product.IsTaxExempt();
+            bool actualIsTaxExempt = product.IsTaxExempt();
 
             // Assert
-            Assert.Equal(expectedResult, actualResult);
+            Assert.Equal(expectedIsTaxExempt, actualIsTaxExempt);
         }
 
         [Theory]
@@ -33,16 +35,17 @@ namespace SalesTaxes.BusinessLayer.Tests
         [InlineData("book", 0)]
         [InlineData("imported bottle of perfume", 0.10)]
         [InlineData("music CD", 0.10)]
-        public void SalesTaxRateTest(string productName, decimal expectedResult)
+        [InlineData(null, 0.10)]
+        public void SalesTaxRateTest(string productName, decimal expectedSalesTaxRate)
         {
             // Arrange
             var product = new Product() { ProductName = productName };
 
             // Act
-            decimal actualResult = product.SalesTaxRate();
+            decimal actualSalesTaxRate = product.SalesTaxRate();
 
             // Assert
-            Assert.Equal(expectedResult, actualResult);
+            Assert.Equal(expectedSalesTaxRate, actualSalesTaxRate);
         }
 
         [Theory]
@@ -51,16 +54,17 @@ namespace SalesTaxes.BusinessLayer.Tests
         [InlineData("book", 0)]
         [InlineData("imported bottle of perfume", 0.05)]
         [InlineData("music CD", 0)]
-        public void ImportTaxRateTest(string productName, decimal expectedResult)
+        [InlineData(null, 0)]
+        public void ImportTaxRateTest(string productName, decimal expectedImportTaxRate)
         {
             // Arrange
             var product = new Product() { ProductName = productName };
 
             // Act
-            decimal actualResult = product.ImportTaxRate();
+            decimal actualImportTaxRate = product.ImportTaxRate();
 
             // Assert
-            Assert.Equal(expectedResult, actualResult);
+            Assert.Equal(expectedImportTaxRate, actualImportTaxRate);
         }
     }
 }
