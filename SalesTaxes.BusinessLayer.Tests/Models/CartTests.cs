@@ -122,9 +122,9 @@ namespace SalesTaxes.BusinessLayer.Tests
             {
                 return;
             }
-            if (serviceProvider is IDisposable)
+            if (serviceProvider is IDisposable disposable)
             {
-                ((IDisposable)serviceProvider).Dispose();
+                disposable.Dispose();
             }
         }
     }

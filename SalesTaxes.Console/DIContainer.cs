@@ -40,9 +40,9 @@ namespace SalesTaxes.AppConsole
             {
                 return;
             }
-            if (ServiceProvider is IDisposable)
+            if (ServiceProvider is IDisposable disposable)
             {
-                ((IDisposable)ServiceProvider).Dispose();
+                disposable.Dispose();
             }
         }
 

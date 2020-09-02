@@ -7,13 +7,11 @@ namespace SalesTaxes.AppConsole
 {
     public class ConsoleApplication
     {
-
-        private readonly ILogger _logger;
+        
         private readonly IServiceProvider _serviceProvider;
 
-        public ConsoleApplication(ILogger logger, IServiceProvider serviceProvider)
+        public ConsoleApplication(IServiceProvider serviceProvider)
         {
-            _logger = logger;
             _serviceProvider = serviceProvider;
         }
 
